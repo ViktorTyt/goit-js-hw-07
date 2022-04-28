@@ -1,34 +1,58 @@
 import { galleryItems } from "./gallery-items.js";
 // Change code below this line
 
-console.log(galleryItems);
-//=====отримуємо посилання на на елементи=========
 const refs = {
   gallery: document.querySelector(".gallery"),
 };
 
-//=====створюємо розмітку елементів галереї=======
-
-const createGallery = (arr) => {
+const createGallery = (args) => {
   const markup = [];
-  console.log(...galleryItems);
-  const item = [...arr]
+
+  const item = [...args]
     .map(
-      (el) => `<div class="gallery__item">
-  <a class="gallery__link" href="${el.original}">
+      (arg) => `<div class="gallery__item">
+    <a class="gallery__link" href="${arg.original}">
     <img
       class="gallery__image"
-      src="${el.preview}"
-      data-source="${el.original}"
-      alt=${el.description}
+      src="${arg.preview}"
+      data-source="${arg.original}"
+      alt="${arg.description}"
     />
   </a>
-</div>`
+  </div>`
     )
     .join("");
+
   markup.push(item);
-  //   console.log(item);
+
   refs.gallery.insertAdjacentHTML("afterbegin", markup);
 };
-console.log(createGallery(galleryItems));
-// console.log(galleryItems.prewiev);
+createGallery(galleryItems);
+
+const HandleOpenModal = (e) => {
+  // console.log(e.target.firstElementChild.nodeName);
+  if (e.target.firstElementChild.nodeName !== "A") {
+    return;
+  }
+
+  const targetModalImage = e.target.firstElementChild.href;
+
+  const instance = basicLightbox.create(`
+      <img src="${targetModalImage}" width="800" height="600">
+  `);
+
+  instance.show();
+
+  if (e.target.firstElementChild.nodeName === "A") {
+    document.addEventListener("keydown", (event) => {
+      if (event.code === "Escape") {
+        console.log(event.code);
+      }
+    });
+  }
+};
+// const HandleCloseModal = (e) => {
+//   const esc = e.target;
+//   console.log(esc);
+// };
+refs.gallery.addEventListener("click", HandleOpenModal);
