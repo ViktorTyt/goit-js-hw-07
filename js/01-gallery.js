@@ -27,32 +27,37 @@ const createGallery = (args) => {
 
   refs.gallery.insertAdjacentHTML("afterbegin", markup);
 };
+
 createGallery(galleryItems);
 
 const HandleOpenModal = (e) => {
-  // console.log(e.target.firstElementChild.nodeName);
   if (e.target.firstElementChild.nodeName !== "A") {
     return;
   }
 
-  const targetModalImage = e.target.firstElementChild.href;
+  const getModalImage =
+    e.target.firstElementChild.firstElementChild.dataset.source;
 
-  const instance = basicLightbox.create(`
-      <img src="${targetModalImage}" width="800" height="600">
-  `);
+  const instance = basicLightbox.create(
+    `<img src="${getModalImage}" width="800" height="600">`,
+    {
+      closable: true,
+      onShow: (instance) => {
+        window.addEventListener("keydown", handlePressEsc);
+      },
+      onClose: (instance) => {
+        window.removeEventListener("keydown", handlePressEsc);
+      },
+    }
+  );
+
+  const handlePressEsc = (e) => {
+    if (e.code === "Escape") {
+      instance.close();
+    }
+  };
 
   instance.show();
-
-  if (e.target.firstElementChild.nodeName === "A") {
-    document.addEventListener("keydown", (event) => {
-      if (event.code === "Escape") {
-        console.log(event.code);
-      }
-    });
-  }
 };
-// const HandleCloseModal = (e) => {
-//   const esc = e.target;
-//   console.log(esc);
-// };
+
 refs.gallery.addEventListener("click", HandleOpenModal);
